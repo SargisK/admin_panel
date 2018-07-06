@@ -24,7 +24,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {indigo, blueGrey, deepOrange}  from '@material-ui/core/colors';
 import menu from '../data.js'
-import User from './User'
+import User from './User/index'
 
 const drawerWidth = 240;
 
@@ -119,8 +119,13 @@ class Home extends PureComponent {
 
   state = {
     open: true,
-    anchorEl: null
+    anchorEl: null,
+    user: this.props.user
   };
+
+  updateUser = (user) => {
+    this.setState({user:  user});
+  }
 
   handleOpenToggle = () => {
     this.setState({ open: !this.state.open });
@@ -137,7 +142,7 @@ class Home extends PureComponent {
   render() {
 
     const {classes} = this.props;
-    const {open, anchorEl} = this.state;
+    const {open, anchorEl, user} = this.state;
 
     return (
       <div className={classes.root} >
@@ -148,7 +153,7 @@ class Home extends PureComponent {
 
             })}
           >
-            <Toolbar   disableGutters={!open}>
+            <Toolbar disableGutters={!open}>
            
               <IconButton
                 color="inherit"
@@ -163,9 +168,9 @@ class Home extends PureComponent {
                 Admin Panel
               </Typography>
               <Typography variant="caption" color="inherit" style={{textTransform:'capitalize'}}>
-                {this.props.user.firstName +' '+ this.props.user.lastName}
+                {user.firstName +' '+ user.lastName}
               </Typography>
-              <Avatar className={classes.orangeAvatar}>{this.props.user.firstName[0]+this.props.user.lastName[0]}</Avatar> 
+              <Avatar className={classes.orangeAvatar}>{user.firstName[0] + user.lastName[0]}</Avatar> 
               <div>
                 <IconButton
                   aria-owns={anchorEl ? 'menu-appbar' : null}
@@ -243,7 +248,7 @@ class Home extends PureComponent {
               [classes.contentShift]: !open   
             })}
           >
-             <User/> 
+             <User userId={user._id}  regUserUpdate={this.updateUser.bind(this)} /> 
           </main>
 
         </div>

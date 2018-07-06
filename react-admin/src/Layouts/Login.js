@@ -9,6 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText'
 import Typography from '@material-ui/core/Typography';
+import Registration from './Registration';
 
 const styles={
   root: {
@@ -17,15 +18,15 @@ const styles={
   },
   login: {
     background: `linear-gradient(to top, ${indigo[900]},  ${indigo[100]})`,
-    width: 400,
-    height: 300,
+    width: 450,
+    height: 350,
     padding: '20px 40px 0 40px',
     borderRadius: 10,
     position: 'absolute',
     top: 'calc(50% - 150px)'
   },
   button: {
-    margin: '15px 15px'
+    margin: '15px 0 15px 30px'
   }
 
 }
@@ -33,6 +34,7 @@ const styles={
 class Login extends Component {
   
   state = {
+    openDialog: false,
     email: '',
     password: '',
     errors: {
@@ -50,6 +52,14 @@ class Login extends Component {
         password: ''
       }  
     })
+  }
+
+  handleDialogOpen = () => {
+    this.setState({openDialog: true})
+  }
+
+  handleDialogClose = () => {
+    this.setState({openDialog: false})
   }
 
   sendForm() {
@@ -125,7 +135,7 @@ class Login extends Component {
     const {classes} = this.props;
 
     return <div className={classes.root}>
-      <Grid justify='center' container sm={12} className={classes.root}>
+      <Grid justify='center' container  className={classes.root}>
         <Paper  className={classes.login}>
           <form method='post'>
             <div style={{marginBottom: 40}}>
@@ -167,18 +177,26 @@ class Login extends Component {
               
               <FormHelperText error={true} id="name-helper-text">{this.state.errors.password}</FormHelperText>
             </FormControl>  
-            <Grid container justify='flex-end'>
-              <Button onClick={this.sendForm.bind(this)} className={classes.button} variant="contained" color="primary" >
-                Send
-              </Button>
-              <Button onClick={this.clearForm.bind(this)}  className={classes.button} variant="contained" color="secondary" >
-                Cancel
-              </Button>
+            <Grid container direction='column' >
+              <Grid container  justify='flex-end'>
+                <Button onClick={this.sendForm.bind(this)} className={classes.button} variant="contained" color="primary" >
+                  Send
+                </Button>
+                <Button onClick={this.clearForm.bind(this)}  className={classes.button} variant="contained" color="secondary" >
+                  Cancel
+                </Button>
+              </Grid>  
+              <Grid container justify='flex-end'>
+                <Button onClick={this.handleDialogOpen} size='small' style={{color: 'lightgrey'}}>
+                  Registration
+                </Button>
+              </Grid>
             </Grid>
-            
           </form>
         </Paper>
       </Grid>
+      <Registration openDialog={this.state.openDialog} handleOpen={this.handleDialogOpen.bind(this)} handleClose={this.handleDialogClose.bind(this)}
+      />
     </div>
   }
 }

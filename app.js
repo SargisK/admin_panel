@@ -25,7 +25,7 @@ app.use(cookieParser());
 
 const MongoStore = require('connect-mongo')(session);
 app.use(session({ 
-  resave: true,
+  resave: false,
   saveUninitialized: false,
   secret: config.get('session:secret'),
   key: config.get('session:key'),

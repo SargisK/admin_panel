@@ -4,7 +4,7 @@ exports.post = function(req, res, next) {
   
   User.findOne({email: req.body.email}, function(err, user){
       
-     if (err) return next(err)
+     if (err) next(err)
 
      if (user === null) {
        let user = new User(req.body)
@@ -12,7 +12,6 @@ exports.post = function(req, res, next) {
        user.save(function(err, user){
         if (err) return next(err)
         req.session.user = user._id;
-        console.log('ok');
         res.status(200);
         res.send({user})
        })

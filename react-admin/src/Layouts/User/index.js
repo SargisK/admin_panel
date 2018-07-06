@@ -17,13 +17,14 @@ import TableRow from '@material-ui/core/TableRow';
 import {blueGrey, indigo} from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Edit from '@material-ui/icons/Edit';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
-
+import EditDialog from './EditDialog';
 
 const styles = {
   root: {
@@ -73,9 +74,11 @@ const styles = {
 export default  withStyles(styles)(class User extends Component {
 
   componentDidMount() {
-    fetch('/users')
-      .then(res => res.json())
-      .then(users => this.setState({users}) )
+   var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/users', false);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhr.send()
+    this.setState({users: JSON.parse(xhr.responseText)}) 
   }
 
   componentDidUpdate(nextProps, nextState, nextContext) {
@@ -93,7 +96,9 @@ export default  withStyles(styles)(class User extends Component {
   state = {
     userUpdate: false,
     users: [],
+    num: 0,
     openDialog: false, 
+    editDialogOpen: false, 
     firstName: '',
     lastName: '',
     password: '',
@@ -129,6 +134,27 @@ export default  withStyles(styles)(class User extends Component {
       } 
     })
   };
+
+  handleEditDialogOpen = (num) => {
+    
+    this.setState({
+      num: num,
+      editDialogOpen: true,
+     
+    })
+  }
+
+  handleEditDialogClose = () => {
+    this.setState({
+      editDialogOpen: false,
+    })
+  }
+
+  handleUpdateUser = () => {
+    this.setState({
+      userUpdate: true
+    })
+  }
 
   handleValidationForm = () => {
     
@@ -178,21 +204,21 @@ export default  withStyles(styles)(class User extends Component {
 
             let response = JSON.parse(xhr.responseText);
             
-            if (response.errors) {
+            if (xhr.status !== 200) {
              
              self.setState({             
                 openDialog: true, 
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                password: formData.password,
-                confirmPassword: formData.password,
-                email: formData.email,
+                firstName: '',
+                lastName: '',
+                password: '',
+                confirmPassword: '',
+                email: '',
                 errors: {
                   firstName: '',
                   lastName: '',
                   password: '',
                   confirmPassword: '',
-                  email: response.errors 
+                  email: response.message 
                 } 
               }); 
                      
@@ -222,7 +248,7 @@ export default  withStyles(styles)(class User extends Component {
     const users = this.state.users;
     const {classes} = this.props;
     const {openDialog} = this.state;
-
+    const id = this.props.userId
     return (
       
       <Grid direction='column' className={classes.content}  container>
@@ -335,13 +361,15 @@ export default  withStyles(styles)(class User extends Component {
                     <TableCell className={classNames(classes.textCenter, classes.lightBlueGrey)} >Name</TableCell>
                     <TableCell className={classNames(classes.textCenter, classes.lightBlueGrey)} >Last Name</TableCell>
                     <TableCell className={classNames(classes.textCenter, classes.lightBlueGrey)} >E-mail</TableCell>    
+                    <TableCell className={classNames(classes.textCenter, classes.lightBlueGrey)} >Edit data</TableCell>  
                     <TableCell className={classNames(classes.textCenter, classes.lightBlueGrey)}>Delete</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>                
-                  {users.map(user =>
-                  
-                    <TableRow key={user._id} className={classes.textCenter} >
+                  {
+                 users.map((user, i) => {
+                                    
+                   return <TableRow key={user._id} className={classes.textCenter} >
                       <TableCell className={classes.textCenter} >              
                         <Avatar className={classNames(classes.avatar, classes.purpleAvatar)}>{user['firstName'][0]+user['lastName'][0] }</Avatar>                  
                       </TableCell>
@@ -349,14 +377,24 @@ export default  withStyles(styles)(class User extends Component {
                       <TableCell className={classes.textCenter} >{user.lastName}</TableCell>
                       <TableCell className={classes.textCenter} >{user['email']}</TableCell>
                       <TableCell className={classes.textCenter} >
+                        <IconButton onClick={this.handleEditDialogOpen.bind(this, i)} className={classes.button} aria-label="Edit">
+                          <Edit />
+                        </IconButton>
+                        
+                      </TableCell>
+                      <TableCell className={classes.textCenter} >
                         <IconButton onClick={this.handleDeleteUser.bind(this, user._id)} className={classes.button} aria-label="Delete">
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
                     </TableRow>
-                  )}
+                  })}
+                 
                 </TableBody>
+                
               </Table>
+                  
+             {this.state.editDialogOpen && <EditDialog userId={id} updateUser={this.props.regUserUpdate} handleUpdateUser={this.handleUpdateUser.bind(this)}  handleClose={this.handleEditDialogClose.bind(this)} editDialogOpen={this.state.editDialogOpen} user={users[this.state.num]} />}
             </Grid>         
           </Paper>
       </Grid>

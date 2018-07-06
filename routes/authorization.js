@@ -7,16 +7,17 @@ exports.post = function(req, res, next) {
   let password = req.body.password;
 
   User.authorize(email, password, function(err, user){
-    console.log(req.email)
+
     if (err) {
       if (err instanceof RegAuthError) {
-        console.log('auth')
         return next(new HttpError('403', err.message))
       } else {
         return next(err);
       }
     }
-    req.session.user = user._id;
+  
+
+    req.session.user = user._id;  
     res.status(200).send({user});
   }) 
 
