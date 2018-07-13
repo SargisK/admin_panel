@@ -1,5 +1,5 @@
 # Admin-panel
-***
+
 ###### This project uses
   
   - HTML5, CSS3     
@@ -10,11 +10,11 @@
   - MongoDB with Mongoose
 
 # Requirements
-***
+
   You need to install [Node](https://nodejs.org) and [MongoDb](https://www.mongodb.com/), if they are not already installed.
 
 # Start
-***
+
   Clone project from github
  
  ```sh
